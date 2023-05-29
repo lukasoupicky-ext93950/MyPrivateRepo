@@ -25,10 +25,12 @@ jobs:
           #then
             echo "Merging release -> develop"
             git fetch release
+            echo "Fetch succ"
+            git branch -a
             #git checkout ${next_branch}
             git checkout develop
             #git merge --no-ff "${current_branch}" "Auto-merge ${current_branch} back to ${next_branch}"
-            git merge --no-ff release "Auto-merge release back to develop"
+            git merge release --no-ff "Auto-merge release back to develop"
             git push
           #else
           #  echo "No next branch, doing nothing"
