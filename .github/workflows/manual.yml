@@ -19,14 +19,15 @@ jobs:
           git config --local user.name "Github Actions"
       - name: Merge
         run: |
-          current_branch= "release"
-          next_branch= "develop"
-          if git branch -r --format "%(refname:short)" | grep "^origin/${next_branch}$"
-          then
-            echo "Merging ${current_branch} -> ${next_branch}"
-            git checkout "${next_branch}"
-            git merge --no-ff "${current_branch}" "Auto-merge ${current_branch} back to ${next_branch}"
+          #current_branch = "release"
+          #next_branch = "develop"
+          #if git branch -r --format "%(refname:short)" | grep "^origin/${next_branch}$"
+          #then
+            #echo "Merging ${current_branch} -> ${next_branch}"
+            #git checkout "${next_branch}"
+            #git merge --no-ff "${current_branch}" "Auto-merge ${current_branch} back to ${next_branch}"
+            git merge --no-ff "release" "Auto-merge release back to develop"
             git push
-          else
-            echo "No next branch, doing nothing"
-          fi
+          #else
+          #  echo "No next branch, doing nothing"
+          #fi
