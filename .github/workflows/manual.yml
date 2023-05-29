@@ -24,7 +24,8 @@ jobs:
           #if git branch -r --format "%(refname:short)" | grep "^origin/${next_branch}$"
           #then
             echo "Merging release -> develop"
-            git fetch release
+            echo "Before Fetch release"
+            git fetch origin/release
             echo "Fetch succ"
             git branch -a
             #git checkout ${next_branch}
