@@ -24,6 +24,7 @@ jobs:
           #if git branch -r --format "%(refname:short)" | grep "^origin/${next_branch}$"
           #then
             echo "Merging release -> develop"
+            git fetch release
             #git checkout ${next_branch}
             git checkout develop
             #git merge --no-ff "${current_branch}" "Auto-merge ${current_branch} back to ${next_branch}"
