@@ -19,8 +19,8 @@ jobs:
           git config --local user.name "Github Actions"
       - name: Merge
         run: |
-          current_branch = "release"
-          next_branch = "develop"
+          current_branch = release
+          next_branch = develop
           #if git branch -r --format "%(refname:short)" | grep "^origin/${next_branch}$"
           #then
             echo "Merging ${current_branch} -> ${next_branch}"
