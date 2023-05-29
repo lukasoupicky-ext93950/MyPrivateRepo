@@ -1,0 +1,32 @@
+name: Merge forward release to develop
+on:
+  push:
+    branches:
+      - "release"
+jobs:
+  merge-forward-to-develop:
+    name: Merge forward to develop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      - name: Set Git config
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"
+      - name: Merge
+        run: |
+          current_branch= "release"
+          next_branch= "develop"
+          if git branch -r --format "%(refname:short)" | grep "^origin/${next_branch}$"
+          then
+            echo "Merging ${current_branch} -> ${next_branch}"
+            git checkout "${next_branch}"
+            git merge --no-ff "${current_branch}" "Auto-merge ${current_branch} back to ${next_branch}"
+            git push
+          else
+            echo "No next branch, doing nothing"
+          fi
