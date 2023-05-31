@@ -3,10 +3,17 @@ on:
   push:
     branches:
       - "release"
+env: 
+  sourceBranchToMerge: release
+  targetBranch: develop
+  branchForPullRequest: release/mergeReleaseToDevelop
 jobs:
   merge-forward-to-develop:
     name: Merge forward to develop
     runs-on: ubuntu-latest
+    sourceBranchToMerge = release
+    targetBranch: develop
+    branchForPullRequest: release/mergeReleaseToDevelop
     steps:
       - name: Checkout source branch
         uses: actions/checkout@v3
@@ -17,22 +24,21 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "Github Actions"
-      - name: Merge
+      - name: Create merge branch if needed
         run: |
-          #current_branch = release
-          #next_branch = develop
-          #if git branch -r --format "%(refname:short)" | grep "^origin/${next_branch}$"
-          #then
-            echo "Merging release -> develop"
-            echo "Before Fetch release"
-            git fetch
-            echo "Fetch succ"
-            git branch -a
-            #git checkout ${next_branch}
-            git checkout develop
-            #git merge --no-ff "${current_branch}" "Auto-merge ${current_branch} back to ${next_branch}"
-            git merge release --no-ff -m "Auto-merge release back to develop"
+          if git branch -r --format "%(refname:short)" | grep "^origin/feature/${branchForPullRequest}$"
+            echo "Creating branch ${branchForPullRequest} for pull request"
+            # TODO craeate branch
+          then
+          else
+            echo "${branchForPullRequest} allready exists"
+          fi
+      - name: Merge and 
+        run: |
+            echo "Merging ${sourceBranchToMerge} -> ${branchForPullRequest}"
+            git checkout ${branchForPullRequest}
+            git merge ${branchForPullRequest} --no-ff -m "Auto-merge release back to develop"
             git push
-          #else
-          #  echo "No next branch, doing nothing"
-          #fi
+      - name: Create pull request
+        run: |
+          
