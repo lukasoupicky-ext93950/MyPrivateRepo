@@ -49,8 +49,8 @@ jobs:
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
           base: ${{ env.targetBranch }}
-          branch: ${{ env.branchForPullRequest}}
-          delete-branch: true
+          branch: ${{ env.sourceBranchToMerge}}
+          delete-branch: false
           title: '[Example] Update report'
           body: |
             Update report
