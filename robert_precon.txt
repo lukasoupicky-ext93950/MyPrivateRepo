@@ -6,11 +6,11 @@ http://localhost:1100/CPS_LOANS_WEB/LoanSales/Links/KTK/CreateApp?DistributionCh
 
 
 
-+ e3d9b843ff5bf4249d8931793f02417fdc0a3510 feat(UF-25463): Nahrazení UFO ZUFO_K5 za  ZUFO_K41
++ e3d9b843ff5bf4249d8931793f02417fdc0a3510 feat(UF-25463): NahrazenÃ­ UFO ZUFO_K5 za  ZUFO_K41
 + cc5391175b6c1a7b63c5efea5847752da25c45f4 fix(DF-71577): ruseni enumu sourceLead
 
 
-Pøi zpracování kroku Doplacení refinancovaného FSÈS úvìru došlo k vıjimce: Received invalid response code for message 'PlaceDisbursementInstructionResponse': 'ERROR'.
+PÃ¸i zpracovÃ¡nÃ­ kroku DoplacenÃ­ refinancovanÃ©ho FSÄŒS ÃºvÃ¬ru doÅ¡lo k vÃ½jimce: Received invalid response code for message 'PlaceDisbursementInstructionResponse': 'ERROR'.
  [msguid: 207810694939] 
 Errors:
-Error 20013: Nesprávná èástka transakce
+Error 20013: NesprÃ¡vnÃ¡ ÄÃ¡stka transakce
