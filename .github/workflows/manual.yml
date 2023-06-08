@@ -24,7 +24,7 @@ jobs:
       - name: Create merge branch if needed
         run: |
           echo "Start"
-          # echo "${ branchForPullRequest }"
+          echo "${ branchForPullRequest }"
           # if git branch -r --format "%(refname:short)" | grep "^origin/${branchForPullRequest }$" then
           #  echo "Creating branch ${branchForPullRequest} for pull request"
           #  git checkout ${{env.targetBranch}}
