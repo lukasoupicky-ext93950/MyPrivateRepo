@@ -30,7 +30,7 @@ jobs:
           #  git checkout -b ${branchForPullRequest}}
           #else
           #  echo "${{ env.branchForPullRequest}} allready exists"
-          #fi
+          fi
       - name: Merge
         run: |
             echo "Merging ${sourceBranchToMerge} -> ${branchForPullRequest}"
