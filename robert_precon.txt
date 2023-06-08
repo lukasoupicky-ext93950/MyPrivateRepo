@@ -1,0 +1,16 @@
+BdoCase - jen vazbi agreementy
+BdoCommonApp - workers
+BdoAppli - checkpoints, DocumentGenarationData
+
+http://localhost:1100/CPS_LOANS_WEB/LoanSales/Links/KTK/CreateApp?DistributionChannel=DISTRIBUTION_CHANNEL.P&Cluid=8019-10-16-16.48.25.451885&OperationType=ACCOUNT_OPERATION.ZSBKTKOU&AccountNumber=4143145053&AccountPrefix=000000&BankCode=0800&PartyType=PARTY_TYPE_CDM.FO&FinancialProduct=FINANCIAL_PRODUCT.KTK_OU
+
+
+
++ e3d9b843ff5bf4249d8931793f02417fdc0a3510 feat(UF-25463): Nahrazení UFO ZUFO_K5 za  ZUFO_K41
++ cc5391175b6c1a7b63c5efea5847752da25c45f4 fix(DF-71577): ruseni enumu sourceLead
+
+
+Pøi zpracování kroku Doplacení refinancovaného FSČS úvìru došlo k výjimce: Received invalid response code for message 'PlaceDisbursementInstructionResponse': 'ERROR'.
+ [msguid: 207810694939] 
+Errors:
+Error 20013: Nesprávná částka transakce
