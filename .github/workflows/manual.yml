@@ -5,8 +5,8 @@ on:
       - "release"
 env: 
   sourceBranchToMerge: "release"
-  targetBranch: "main"
-  branchForPullRequest: "mergeReleaseToDevelop2"
+  targetBranch: "develop"
+  branchForPullRequest: "mergeReleaseToDevelop3"
 jobs:
   merge-forward-to-develop:
     name: Merge forward to develop
