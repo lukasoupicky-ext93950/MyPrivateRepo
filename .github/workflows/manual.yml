@@ -6,7 +6,7 @@ on:
 env: 
   sourceBranchToMerge: "release"
   targetBranch: "main"
-  branchForPullRequest: "mergeReleaseToDevelop"
+  branchForPullRequest: "mergeReleaseToDevelop2"
 jobs:
   merge-forward-to-develop:
     name: Merge forward to develop
