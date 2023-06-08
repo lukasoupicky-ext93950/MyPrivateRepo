@@ -27,7 +27,7 @@ jobs:
           #if git branch -r --format "%(refname:short)" | grep "^origin/${{ env.branchForPullRequest }}$" then
           echo "Creating branch ${{ env.branchForPullRequest }} for pull request"
           git checkout ${{ env.targetBranch }}
-          git checkout -b ${{ env.branchForPullRequest }}
+          #git checkout -b ${{ env.branchForPullRequest }}
           git push --set-upstream origin ${{ env.branchForPullRequest }}
           #else
           #  echo "${{ env.branchForPullRequest}} allready exists"
