@@ -27,8 +27,8 @@ jobs:
           #if git branch -r --format "%(refname:short)" | grep "^origin/${{ env.branchForPullRequest }}$" then
           echo "Creating branch ${{ env.branchForPullRequest }} for pull request"
           git checkout ${{ env.targetBranch }}
-          git checkout -b ${{ env.branchForPullRequest }}
-          git push --set-upstream origin ${{ env.branchForPullRequest }}
+          #git checkout -b ${{ env.branchForPullRequest }}
+          #git push --set-upstream origin ${{ env.branchForPullRequest }}
           #else
           #  echo "${{ env.branchForPullRequest}} allready exists"
           #fi
@@ -53,8 +53,9 @@ jobs:
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
           base: ${{ env.branchForPullRequest }}
-          branch: ${{ env.targetBranch }}
-          delete-branch: false
+          branch: "Xxx"  
+          #${{ env.targetBranch }}
+          delete-branch: true
           title: '[Example] Update report'
           body: |
             Update report
