@@ -52,7 +52,7 @@ jobs:
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
-          # base: ${{ env.targetBranch }}
+          base: ${{ env.targetBranch }}
           branch: ${{ env.branchForPullRequest }}
           delete-branch: true
           title: '[Example] Update report'
@@ -68,6 +68,11 @@ jobs:
           #  codeowners
           milestone: 1
           draft: false
+          run: |
+            echo "Merging ${sourceBranchToMerge} -> ${branchForPullRequest}"
+            git checkout ${branchForPullRequest}
+            git merge ${sourceBranchToMerge} --no-ff -m "Auto-merge release back to develop"
+            #git push
       - name: Enable Pull Request Automerge
         if: steps.cpr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@v3
