@@ -28,9 +28,9 @@ jobs:
             echo "Creating branch ${{ env.branchForPullRequest }} for pull request"
           #  git checkout ${{env.targetBranch}}
           #  git checkout -b ${branchForPullRequest}}
-          else
-            echo "${{ env.branchForPullRequest}} allready exists"
-          fi
+          #else
+          #  echo "${{ env.branchForPullRequest}} allready exists"
+          #fi
       - name: Merge
         run: |
             echo "Merging ${sourceBranchToMerge} -> ${branchForPullRequest}"
