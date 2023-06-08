@@ -23,15 +23,20 @@ jobs:
           git config --local user.name "Github Actions"
       - name: Create merge branch if needed
         run: |
-          # echo "${{ env.branchForPullRequest }}"
-          if git branch -r --format "%(refname:short)" | grep "^origin/${{ env.branchForPullRequest }}$" then
-            echo "Creating branch ${{ env.branchForPullRequest }} for pull request"
+          echo "${{ env.branchForPullRequest }}"
+          #if git branch -r --format "%(refname:short)" | grep "^origin/${{ env.branchForPullRequest }}$" then
+          #  echo "Creating branch ${{ env.branchForPullRequest }} for pull request"
           #  git checkout ${{env.targetBranch}}
           #  git checkout -b ${branchForPullRequest}}
           #else
           #  echo "${{ env.branchForPullRequest}} allready exists"
           #fi
           #shell: bash
+          if 1=1 then
+            echo "True"
+          else
+            echo "false"
+          fi
       - name: Merge
         run: |
             echo "Merging ${sourceBranchToMerge} -> ${branchForPullRequest}"
