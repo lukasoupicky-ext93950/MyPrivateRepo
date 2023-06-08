@@ -42,7 +42,7 @@ jobs:
       - name: checkoutBranch
         uses: actions/checkout@v3
         with:
-          ref: ${{ env.branchForPullRequest }}
+          ref: ${{ env.targetBranch }}
       - name: createPullRequest
         id: cpr
         uses: peter-evans/create-pull-request@v5
@@ -52,7 +52,7 @@ jobs:
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
-          base: ${{ env.targetBranch }}
+          # base: ${{ env.targetBranch }}
           branch: ${{ env.branchForPullRequest }}
           delete-branch: true
           title: '[Example] Update report'
