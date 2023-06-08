@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "Start"
           # echo "${ env.branchForPullRequest }"
-          #if git branch -r --format "%(refname:short)" | grep "^origin/${ {env.branchForPullRequest }}$" then
+          # if git branch -r --format "%(refname:short)" | grep "^origin/${env.branchForPullRequest }$" then
           #  echo "Creating branch ${branchForPullRequest} for pull request"
           #  git checkout ${{env.targetBranch}}
           #  git checkout -b ${{env.branchForPullRequest}}
