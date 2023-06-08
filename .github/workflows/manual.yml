@@ -48,6 +48,7 @@ jobs:
         with:
           source_branch: "release"
           destination_branch: "develop"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: createPullRequest
         id: cpr
         uses: peter-evans/create-pull-request@v5
