@@ -27,8 +27,8 @@ jobs:
             echo "Creating branch ${branchForPullRequest} for pull request"
             git checkout ${targetBranch}
             git checkout -b ${branchForPullRequest}
-          else
-            echo "${branchForPullRequest} allready exists"
+          #else
+          #  echo "${branchForPullRequest} allready exists"
           fi
       - name: Merge
         run: |
