@@ -24,13 +24,13 @@ jobs:
       - name: Create merge branch if needed
         run: |
           echo "Start"
-          # echo "${ env.branchForPullRequest }"
-          # if git branch -r --format "%(refname:short)" | grep "^origin/${env.branchForPullRequest }$" then
+          # echo "${ branchForPullRequest }"
+          # if git branch -r --format "%(refname:short)" | grep "^origin/${branchForPullRequest }$" then
           #  echo "Creating branch ${branchForPullRequest} for pull request"
           #  git checkout ${{env.targetBranch}}
-          #  git checkout -b ${{env.branchForPullRequest}}
+          #  git checkout -b ${branchForPullRequest}}
           #else
-          #  echo "${{branchForPullRequest}} allready exists"
+          #  echo "${branchForPullRequest} allready exists"
           #fi
       - name: Merge
         run: |
