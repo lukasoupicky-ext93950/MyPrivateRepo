@@ -48,8 +48,8 @@ jobs:
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
-          base: ${{ env.targetBranch }}
-          branch: ${{ env.branchForPullRequest}}
+          base: ${{ env.branchForPullRequest }}
+          branch: ${{ env.targetBranch}}
           delete-branch: true
           title: '[Example] Update report'
           body: |
