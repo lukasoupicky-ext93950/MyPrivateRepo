@@ -1,0 +1,22 @@
+name: Create pull request for merge to develop
+on:
+  push:
+    branches:
+      - release
+jobs:
+  CreatePullRequestToDevelop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
+      - name: Reset destination branch
+        run: |
+          git fetch origin release:release
+          git reset --hard release
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: release_merge
+          commit-message: Automerge
+          title: Automatic PR from release to develop 
