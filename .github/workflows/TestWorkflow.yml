@@ -7,9 +7,16 @@ jobs:
   Create_pull_request_to_develop:
     runs-on: ubuntu-latest
     steps:
-      - name: CreatePR
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: "release"
+
+      - name: Create pull-request
         uses: repo-sync/pull-request@v2
         with:
-          source_branch: "release"
           destination_branch: "develop"
+          pr_title: "Automatic merge ${{ github.ref }} into develop"
+          pr_body: "👑 *An automated PR*"
+          pr_draft: false
           github_token: ${{ secrets.GITHUB_TOKEN }}
