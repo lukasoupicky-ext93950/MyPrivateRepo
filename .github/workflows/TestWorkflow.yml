@@ -1,0 +1,15 @@
+name: Merge forward release to develop simple
+on:
+  push:
+    branches:
+      - "release"
+jobs:
+  Create_pull_request_to_develop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: CreatePR
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: "release"
+          destination_branch: "develop"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
