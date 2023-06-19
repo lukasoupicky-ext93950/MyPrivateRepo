@@ -1,13 +1,10 @@
-name: Merge forward release to develop simple
+name: Merge forward release to develop
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
-      - 'release/**'
+      - "release"
 jobs:
   Create_pull_request_to_develop:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: CreatePR
