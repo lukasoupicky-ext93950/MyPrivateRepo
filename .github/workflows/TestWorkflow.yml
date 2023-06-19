@@ -1,4 +1,4 @@
-name: Merge forward release to develop
+name: Merge forward release to develop simple
 on:
   pull_request:
     types:
