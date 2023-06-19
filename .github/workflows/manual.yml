@@ -2,7 +2,7 @@ name: Merge forward release to develop
 on:
   push:
     branches:
-      - "release"
+      - "release_"
 jobs:
   merge-forward-to-develop:
     name: Merge forward to develop
