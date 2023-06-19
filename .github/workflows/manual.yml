@@ -2,7 +2,7 @@ name: Merge forward release to develop
 on:
   push:
     branches:
-      - "release"
+      - "release_"
 env: 
   sourceBranchToMerge: "release"
   targetBranch: "main"
