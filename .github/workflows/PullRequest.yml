@@ -16,6 +16,7 @@ jobs:
           git reset --hard release
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
+        id: cpr
         with:
           branch: feature/release_merge
           commit-message: "chore: Automerge from release to develop"
