@@ -28,16 +28,13 @@ jobs:
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
       - name: Enable automerge
-        uses: "pascalgn/automerge-action@v0.15.6"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_METHOD: "merge"
-          MERGE_REQUIRED_APPROVALS: "0"
-          UPDATE_METHOD: "rebase"
-          PULL_REQUEST: "${{steps.cpr.outputs.pull-request-number}}"
-      - name: Auto approve pull request
-        uses: hmarr/auto-approve-action@v3
+        uses: peter-evans/enable-pull-request-automerge@v3
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          merge-method: merge
+      - name: Auto approve pull request
+        run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
