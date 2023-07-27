@@ -21,3 +21,12 @@ jobs:
           commit-message: "chore: Automerge from release to develop"
           title: "chore: Automatic merge from release to develop" 
           delete-branch: true
+      - name: Check outputs
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+      - name: Auto approve pull request
+        uses: hmarr/auto-approve-action@v3
+        with:
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
