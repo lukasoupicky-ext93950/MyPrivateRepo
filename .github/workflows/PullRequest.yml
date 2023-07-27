@@ -1,0 +1,40 @@
+name: Create pull request for merge to develop
+on:
+  push:
+    branches:
+      - release
+jobs:
+  CreatePullRequestToDevelop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
+      - name: Reset destination branch
+        run: |
+          git fetch origin release:release
+          git reset --hard release
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        id: cpr
+        with:
+          branch: feature/release_merge
+          commit-message: "chore: Automerge from release to develop"
+          title: "chore: Automatic merge from release to develop" 
+          delete-branch: true
+      - name: Check outputs
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+      - name: Enable automerge
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: merge
+      - name: Auto approve pull request
+        run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          

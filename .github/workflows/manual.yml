@@ -1,32 +1,23 @@
-name: Merge forward release to develop
+name: Create pull request for merge to develop
 on:
   push:
     branches:
-      - "release_"
+      - release__
 jobs:
-  merge-forward-to-develop:
-    name: Merge forward to develop
+  CreatePullRequestToDevelop:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source branch
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-      - name: Set Git config
+          ref: develop
+      - name: Reset destination branch
         run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "Github Actions"
-      - name: Merge
-        run: |
-          current_branch= "release"
-          next_branch= "develop"
-          if git branch -r --format "%(refname:short)" | grep "^origin/${next_branch}$"
-          then
-            echo "Merging ${current_branch} -> ${next_branch}"
-            git checkout "${next_branch}"
-            git merge --no-ff "${current_branch}" "Auto-merge ${current_branch} back to ${next_branch}"
-            git push
-          else
-            echo "No next branch, doing nothing"
-          fi
+          git fetch origin release:release
+          git reset --hard release
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: feature/release_merge
+          commit-message: "chore: Automerge from release to develop"
+          title: "chore: Automatic merge from release to develop" 
+          delete-branch: true
