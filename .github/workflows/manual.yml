@@ -2,7 +2,7 @@ name: Create pull request for merge to develop
 on:
   push:
     branches:
-      - release
+      - release__
 jobs:
   CreatePullRequestToDevelop:
     runs-on: ubuntu-latest
