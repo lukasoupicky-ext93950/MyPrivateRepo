@@ -34,8 +34,7 @@ jobs:
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: merge
       - name: Auto approve pull request
-        uses: benc-uk/workflow-dispatch@v1
+        uses: hmarr/auto-approve-action@v3
         with:
-          workflow: Auto approve
-          inputs: '{ "pullRequestNumber": ${{ steps.cpr.outputs.pull-request-number }}}'
+          pull-request-number: ${{ github.event.inputs.pullRequestNumber }}
           
