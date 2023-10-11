@@ -1,0 +1,1065 @@
+openapi: 3.0.0
+info:
+  title: Loans server REST api
+  version: "1"
+  description: >-
+    Popis Loans server API
+
+servers:
+  - url: https://uat1-webapi-mila.vs.csin.cz/webapi/api/v1/loans/
+    description: Test environment
+  - url: https://prod-webapi-mila.vs.csin.cz/webapi/api/v1/loans/
+    description: Production environment
+
+components:
+  schemas:
+    PayoffData:
+      type: object
+      required:
+        - beforeDueAmountActual
+        - pastDueAmountActual
+        - totalAmount
+        - totalAmountRepayments
+        - totalDueAmountActual
+      properties:
+        beforeDueAmountActual:
+          $ref: "#/components/schemas/Amount"
+          description: Currently due "before", rounded to 2 decimals
+        pastDueAmountActual:
+          $ref: "#/components/schemas/Amount"
+          description: Currently due "past", rounded to 2 decimals
+        totalAmount:
+          $ref: "#/components/schemas/Amount"
+          description: Total amount to be repaid, rounded to 2 decimals
+        totalAmountRepayments:
+          $ref: "#/components/schemas/Amount"
+          description: Sum of installment to be repaid, rounded to 2 decimals
+        totalDueAmountActual:
+          $ref: "#/components/schemas/Amount"
+          description: The total amount to repay the loan to date, rounded to 2 decimals
+    DebtList:
+      type: object
+      properties:
+        contractLawInterest:
+          $ref: "#/components/schemas/Amount"
+          description: Interest on arrears, rounded to 2 decimals
+        costs:
+          $ref: "#/components/schemas/Amount"
+          description: Costs, rounded to 2 decimals
+        debitCommission:
+          $ref: "#/components/schemas/Amount"
+          description: Debit commission, rounded to 2 decimals
+        extraRepaymentFee:
+          $ref: "#/components/schemas/Amount"
+          description: Fee for extra repayment, rounded to 2 decimals
+        fees:
+          $ref: "#/components/schemas/Amount"
+          description: Sum of fees, rounded to 2 decimals
+        interest:
+          $ref: "#/components/schemas/Amount"
+          description: Regular interest, rounded to 2 decimals
+        penalty:
+          $ref: "#/components/schemas/Amount"
+          description: Penalty, rounded to 2 decimals
+        principal:
+          $ref: "#/components/schemas/Amount"
+          description: Principal, rounded to 2 decimals
+    FutureRepaymentDetail:
+      type: object
+      required:
+        - amount
+        - dateDue
+        - deptType
+      properties:
+        amount:
+          $ref: "#/components/schemas/Amount"
+          description: Repayment value, rounded to 2 decimals
+        dateDue:
+          type: string
+          format: date
+          description: Repayment due date
+          example: "2021-08-15"
+        deptType:
+          type: string
+          description: Repayment type (CB_RepaymentType)
+    FutureRepaymentSummary:
+      type: object
+      properties:
+        anuityAmount:
+          $ref: "#/components/schemas/Amount"
+          description: Sum of repayments to repay loan, rounded to 2 decimals
+        debitCommission:
+          $ref: "#/components/schemas/Amount"
+          description: Debit commission, rounded to 2 decimals
+        fees:
+          $ref: "#/components/schemas/Amount"
+          description: Sum of fees, rounded to 2 decimals
+        interest:
+          $ref: "#/components/schemas/Amount"
+          description: Regular interest, rounded to 2 decimals
+        principal:
+          $ref: "#/components/schemas/Amount"
+          description: Principal, rounded to 2 decimals
+        totalAmountRegular:
+          $ref: "#/components/schemas/Amount"
+          description: Total amount to repay to date, rounded to 2 decimals
+    BalanceCalculationData:
+      type: object
+      required:
+        - payoffData
+      properties:
+        payoffData:
+          $ref: "#/components/schemas/PayoffData"
+          description: Basic payoff data
+        debtList:
+          $ref: "#/components/schemas/DebtList"
+          description: Detailed debt data
+        futureRepaymentDetails:
+          type: array
+          items:
+            $ref: "#/components/schemas/FutureRepaymentDetail"
+            minItems: 1
+          description: Future repayments details
+        futureRepaymentSummary:
+          $ref: "#/components/schemas/FutureRepaymentSummary"
+          description: Summary of future repayments
+
+    ActionGroups:
+      properties:
+        actionGroups:
+          $ref: "#/components/schemas/ActionGroupsArray"
+
+    ActionGroupsArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/ActionGroup"
+    ActionGroup:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          type: string
+          description: Action group code
+          example: GRP1
+        actionCodes:
+          description: Actions (operations) in group
+          type: array
+          items:
+            $ref: "#/components/schemas/ActionCode"
+
+    ActionCode:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Action (operation) code
+          example: accCode1
+        title:
+          type: string
+          description: Action title for view
+          example: Some title
+        description:
+          type: string
+          description: Action description for view
+          example: accCode1
+        startingUrl:
+          type: string
+          description: Url link for start operation
+          example: http://cpsint.csint.cz/loans/operations
+        order:
+          type: integer
+          format: int32
+          description: Action display order
+          example: 1
+        caseType:
+          type: string
+          description: Case type for operation
+          example: CT1101
+    ChangeAmountInterval:
+      type: object
+      required:
+        - minInstallment
+        - maxInstallment
+      properties:
+        minInstallment:
+          $ref: "#/components/schemas/Amount"
+          description: Minimal amount for installment
+        maxInstallment:
+          $ref: "#/components/schemas/Amount"
+          description: Miximal amount for installment
+
+    ChangeAmountVariant:
+      type: object
+      required:
+        - newInstallmentAmount
+        - newInstallmentCount
+        - newLastInstallmentDate
+        - newLastInstallmentAmount
+      properties:
+        newInstallmentAmount:
+          $ref: "#/components/schemas/Amount"
+          description: New installment amount after change
+        newInstallmentCount:
+          type: integer
+          format: int32
+          description: Remaining installment count
+        newLastInstallmentDate:
+          type: string
+          format: date
+          description: New last installment date after change
+        newLastInstallmentAmount:
+          $ref: "#/components/schemas/Amount"
+          description: New last installment
+        newBenefitMaturityDate:
+          type: string
+          format: date
+          description: New last benefit installment date after change
+
+    PostponeVariant:
+      type: object
+      required:
+        - newInstallmentAmount
+        - newLastInstallmentDate
+        - newLastInstallmentAmount
+      properties:
+        newInstallmentAmount:
+          $ref: "#/components/schemas/Amount"
+          description: New installment amount after change
+        newLastInstallmentDate:
+          type: string
+          format: date
+          description: New last installment date after change
+        newLastInstallmentAmount:
+          $ref: "#/components/schemas/Amount"
+          description: New last installment
+        newBenefitMaturityDate:
+          type: string
+          format: date
+          description: New last benefit installment date after change
+
+    ChangeAmountIntervalRufo:
+      type: object
+      required:
+        - minInstallmentAmount
+        - maxInstallmentAmount
+        - firstAffectedInstallmentDate
+        - currentInstalmentAmount
+      properties:
+        firstAffectedInstallmentDate:
+          type: string
+          format: date
+          description: The first repayment date affected by change
+          example: "2021-03-15"
+        currentInstallmentAmount:
+          $ref: "#/components/schemas/Amount"
+          description: Current installment amount
+        minInstallmentAmount:
+          $ref: "#/components/schemas/Amount"
+          description: Minimal amount for installment
+        maxInstallmentAmount:
+          $ref: "#/components/schemas/Amount"
+          description: Miximal amount for installment
+
+    Amount:
+      type: object
+      description: Amount with precision
+      required:
+        - value
+        - precision
+      properties:
+        value:
+          type: integer
+          format: int64
+          description: Value of an amount. Number without decimal part.
+        precision:
+          type: integer
+          minimum: 0
+          description: Precision of the amount. How many digits from value fields should be considered to be decimal.
+
+    GetEccPartnerApplicationRequest:
+      type: object
+      description: Get acc partner application request
+      required:
+        - productId
+        - cluid
+      properties:
+        createReason:
+          type: string
+          description: Důvod založení žádosti (může být ID dobré rady, ID příležitostu, ID aktivity)
+        productId:
+          type: string
+          description: Finanční produkt, na který je založena žádost
+        cluid:
+          type: string
+          description: CLUID klienta - žadatel
+
+    GetEccPartnerApplicationResponse:
+      type: object
+      description: Id and url for application
+      required:
+        - caseId
+        - redirectUrl
+      properties:
+        caseId:
+          type: string
+          description: Číslo založené žádosti, nebo existující žádosti
+        redirectUrl:
+          type: string
+          description: URL na přesměrování do procesu poskytnutí úvěrové žádosti
+    ExecuteStepRequest:
+      type: object
+      description: Collection of parameters for step execution
+      required:
+        - processStage
+        - casePhase
+        - stepId
+      properties:
+        parameters:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties:
+              type: string
+        processStage:
+          type: string
+        casePhase:
+          x-CPSLOANS-codetable: CASE_PROC_PHASE
+          type: string
+        stepId:
+          type: string
+    StepExecutionResult:
+      type: object
+      description: Result of step execution
+      required:
+        - resultCode
+        - preconditions
+      properties:
+        resultCode:
+          type: string
+          description: Result code used for decision how to continue in process
+        preconditions:
+          type: array
+          items:
+            type: string
+    SubStepResponse:
+      type: object
+      properties:
+        substeps:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubStep"
+    SubStep:
+      type: object
+      properties:
+        code:
+          type: string
+          x-CPSLOANS-codetable: CB_WorkflowSubsteps
+          description: Value from RDS codebook CB_WorkflowSubsteps
+        resultCode:
+          type: string
+        creationDate:
+          type: string
+          format: date
+        completionDate:
+          type: string
+          format: date
+        partyRole:
+          type: string
+          x-CPSLOANS-codetable: PARTY_ROLE
+        errorDescription:
+          type: string
+        order:
+          type: integer
+        groupCode:
+          $ref: "#/components/schemas/BackendSubstepGroups"
+
+    ApiErrorType:
+      type: object
+      description: Application error
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: "CHANNEL_OFF"
+        scope:
+          type: string
+          description: Error source
+          example: request
+        parameters:
+          $ref: "#/components/schemas/ErrorParameters"
+
+    ErrorParameters:
+      type: object
+      description: Error description etc.
+      properties:
+        errorMessage:
+          type: string
+          description: Exception message
+          example: Distribution channel is not available
+
+    ApiErrorResult:
+      type: object
+      description: API error schema
+      required:
+        - errors
+        - cz-transactionId
+      properties:
+        cz-transactionId:
+          type: string
+          description: Tracing identifier
+          example: "bf72585e-ef8c-4f64-b486-cb95c6d303d0"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApiErrorType"
+    BackendSubstepGroups:
+      type: string
+      enum:
+        - BackEndCreationSubsteps
+        - ExternalConsolidationSubsteps
+        - InternalConsolidationSubsteps
+        - ConsolidationNonpurposeDrawdownSubsteps
+      description: Backend creation/drawdown substeps groups
+
+  requestBodies:
+    GetEccPartnerApplicationRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GetEccPartnerApplicationRequest"
+    ExecuteStepRequest:
+      description: Possible runtime parameters for step execution
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ExecuteStepRequest"
+
+  responses:
+    GetCashloanBalanceCalculationResponse:
+      description: Calculated balance calculation data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/BalanceCalculationData"
+    GetOperationsCashloanResponse:
+      description: aaa
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ActionGroups"
+
+    GetOperationsRevolvingloanResponse:
+      description: aaa
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ActionGroups"
+    GetOperationsOverdraftResponse:
+      description: Overdraft operations
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ActionGroups"
+    ApiError:
+      description: API error schema
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiErrorResult"
+
+    ChangeAmountIntervalResponse:
+      description: Lower and upper bound for installment
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ChangeAmountInterval"
+
+    ChangeAmountVariantResponse:
+      description: New installment with parameters according to it
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ChangeAmountVariant"
+
+    PostponeVariantResponse:
+      description: New installment parameters after postponement
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PostponeVariant"
+    ChangeAmountIntervalRufoResponse:
+      description: Lower and upper bound for installment
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ChangeAmountIntervalRufo"
+    GetCreditCardLoanServiceOperationsResponse:
+      description: Credit card loan operations
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ActionGroups"
+    GetEccPartnerApplicationResponse:
+      description: Credit card loan operations
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GetEccPartnerApplicationResponse"
+    ExecuteStepResponse:
+      description: Step execution result
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/StepExecutionResult"
+    GetSubStepResponse:
+      description: Služba slouží k načtení (pod)kroků založení úvěru do BE.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SubStepResponse"
+
+  parameters:
+    cluidFromHeader:
+      name: cluid
+      in: header
+      required: true
+      description: Client cluid
+      schema:
+        type: string
+      example: 1998-12-03-08.14.13.520370
+    userIdFromHeader:
+      name: userId
+      in: header
+      required: false
+      description: Worker login (CEN)
+      schema:
+        type: string
+      example: cen12345
+    sourceSystemFromHeader:
+      name: sourceSystem
+      in: header
+      required: false
+      description: Source system identification (from ...)
+      schema:
+        type: string
+      example: STORE
+    authorizationFromHeader:
+      name: Authorization
+      in: header
+      description: e.g. Bearer tg048
+      required: false
+      x-example: Bearer tg048
+      schema:
+        type: string
+    currentLoansIdFromPath:
+      name: currentLoanId
+      in: query
+      required: true
+      description: Cgp loan id
+      schema:
+        type: string
+      example: 4C2752A4CFD21E601F413E8F3D2B529842FE9649
+    cgpHashedIdFromQuery:
+      name: cgpHashedId
+      in: query
+      required: true
+      description: Cgp loan id
+      schema:
+        type: string
+      example: 4C2752A4CFD21E601F413E8F3D2B529842FE9649
+    changeDateFromPath:
+      name: changeFrom
+      in: query
+      required: true
+      description: Required date for change
+      schema:
+        type: string
+        format: date
+      example: "2019-08-15"
+    changeDateNonRequiredFromPath:
+      name: changeFrom
+      in: query
+      required: false
+      description: Required date for change
+      schema:
+        type: string
+        format: date
+      example: "2019-08-15"
+    requiredDateFromPath:
+      name: requiredDate
+      in: query
+      required: true
+      description: Date of postponed installment
+      schema:
+        type: string
+        format: date
+      example: 2020-08-15
+    requiredDateFromQuery:
+      name: requiredDate
+      in: query
+      required: false
+      description: Date of calculation
+      schema:
+        type: string
+        format: date
+      example: "2020-08-15"
+    newInstallmentFromPath:
+      name: newInstallment
+      in: query
+      required: true
+      description: Required new installment
+      schema:
+        type: integer
+        format: int64
+      example: 1256
+    keepLastDateFromPath:
+      name: keepLastInstallmentDate
+      in: query
+      required: true
+      description: Should be retained the last installment date
+      schema:
+        type: boolean
+      example: true
+    languageFromQuery:
+      name: language
+      in: query
+      required: true
+      description: Language for texts and messages
+      schema:
+        type: string
+        enum: [CS, EN]
+      example: CS
+    targetSystemFromQuery:
+      name: targetSystem
+      in: query
+      required: true
+      description: Target system code (CB_ApplicationSystem) realizing operation
+      schema:
+        type: string
+      example: STORE
+    distributionChannelFromQuery:
+      name: distributionChannel
+      in: query
+      required: true
+      description: Target system distribution channel (CB_SalesChannel) realizing operation
+      schema:
+        type: string
+      example: GRG
+    caseIdFromPath:
+      name: caseId
+      in: path
+      schema:
+        type: string
+      description: Application identifier
+      required: true
+    stepCodeFromPath:
+      name: stepCode
+      in: path
+      schema:
+        type: string
+      description: Step code to execute
+      required: true
+    webApiKeyFromHeader:
+      name: Web-Api-Key
+      in: header
+      description: Calling system identification
+      required: true
+      x-example: dd3c4d08-6c39-411a-a37d-0fbea365fc1e
+      schema:
+        type: string
+    caseIdFromRoute:
+      name: caseId
+      in: path
+      required: true
+      description: ID žádosti
+      example: 1000621457
+      schema:
+        type: string
+    groupCodeFromQuery:
+      name: groupCode
+      in: query
+      schema:
+        $ref: "#/components/schemas/BackendSubstepGroups"
+      required: false
+      description: Select subset of steps by execution group
+paths:
+  /my/cashloan/calculatedbalance:
+    get:
+      description: >-
+        Service provides data for repayment of the balance (operation Balance calculation)
+        Returning this error codes:
+        <table>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CLUID</td><td width="50%">Missing parameter: Cluid.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CURRENTLOANID</td><td width="50%">Missing parameter: currentLoanId</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISMATCH_PARAMETER_REQUIREDDATE</td><td width="50%">Type mismatch parameter: requiredDate</td></tr>
+          <tr><td width="5%">400</td><td width="45%">INVALID_PARAMETER_REQUIREDDATE</td><td width="50%">Date requiredDate is in the past</td></tr>
+          <tr><td width="5%">400</td><td width="45%">INVALID_PARAMETER_CURRENTLOANID</td><td width="50%">The account is not responding to input account which are contracted loan increase</td></tr>
+          <tr><td width="5%">404</td><td width="45%">LOAD_ACCOUNT_DATA_FAILED</td><td width="50%">Failed loading account data from backend systems.</td></tr>
+          <tr><td width="5%">404</td><td width="45%">OPERATION_NOT_ALLOWED</td><td width="50%">Required operation is not allowed for the loan account</td></tr>
+        </table>
+      tags:
+        - Cashloan service operations
+      externalDocs:
+        url: https://cnfl.csin.cz/display/UL/Loans_REST__RBL2232_Nacteni_parametru_vycisleni_zustatku
+      operationId: getCalculatedBalance
+      parameters:
+        - $ref: "#/components/parameters/sourceSystemFromHeader"
+        - $ref: "#/components/parameters/userIdFromHeader"
+        - $ref: "#/components/parameters/cluidFromHeader"
+        - $ref: "#/components/parameters/currentLoansIdFromPath"
+        - $ref: "#/components/parameters/requiredDateFromQuery"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetCashloanBalanceCalculationResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+        "404":
+          $ref: "#/components/responses/ApiError"
+        "403":
+          $ref: "#/components/responses/ApiError"
+  /my/revolvingloan/service/operations:
+    get:
+      summary: Gets allowed operations for product
+      operationId: getRevolvingloanOperations
+      description: >-
+        Service provides list of operations allowed for product</br></br>
+        Returning this error codes:
+        <table>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CLUID</td><td width="50%">Missing parameter: Cluid.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CGPHASHEDID</td><td width="50%">Missing parameter: CGP Hashed ID.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_TARGETSYSTEM</td><td width="50%">Missing parameter: Target system .</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_DISTRIBUTIONCHANNEL</td><td width="50%">Missing parameter: Distribution channel.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_LANGUAGE</td><td width="50%">Missing parameter: Language.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">WRONGENUM_PARAMETER_TARGETSYSTEM</td><td width="50%">Wrong enumeration value: target system.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">WRONGENUM_PARAMETER_DISTRIBUTIONCHANNEL</td><td width="50%">Wrong enumeration value: Distribution channel.</td></tr>
+          <tr><td width="5%">403</td><td width="45%">USER_IAM_NOTFOUND</td><td width="50%">User was not found in backend systems.</td></tr>
+          <tr><td width="5%">403</td><td width="45%">ACCOUNT_NOT_FOUND</td><td width="50%">Account was not found in backend systems.</td></tr>
+          <tr><td width="5%">404</td><td width="45%">LOAD_ACCOUNT_DATA_FAILED</td><td width="50%">Failed loading account data from backend systems.</td></tr>
+        </table>
+      tags:
+        - Revolving loan service operations
+      externalDocs:
+        url: https://cnfl.csin.cz/display/UL/Loans_REST__RBL2501_Nacteni_seznamu_nabizenych_operaci_RUFO
+      parameters:
+        - $ref: "#/components/parameters/sourceSystemFromHeader"
+        - $ref: "#/components/parameters/userIdFromHeader"
+        - $ref: "#/components/parameters/cluidFromHeader"
+        - $ref: "#/components/parameters/cgpHashedIdFromQuery"
+        - $ref: "#/components/parameters/distributionChannelFromQuery"
+        - $ref: "#/components/parameters/targetSystemFromQuery"
+        - $ref: "#/components/parameters/languageFromQuery"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetOperationsRevolvingloanResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+        "404":
+          $ref: "#/components/responses/ApiError"
+        "403":
+          $ref: "#/components/responses/ApiError"
+  /my/cashloan/service/operations:
+    get:
+      summary: Gets allowed operations for product
+      operationId: getCashLoanOperations
+      description: >-
+        Service provides list of operations allowed for product</br></br>
+        Returning this error codes:
+        <table>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CLUID</td><td width="50%">Missing parameter: Cluid.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CGPHASHEDID</td><td width="50%">Missing parameter: CGP Hashed ID.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_TARGETSYSTEM</td><td width="50%">Missing parameter: Target system .</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_DISTRIBUTIONCHANNEL</td><td width="50%">Missing parameter: Distribution channel.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_LANGUAGE</td><td width="50%">Missing parameter: Language.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">WRONGENUM_PARAMETER_TARGETSYSTEM</td><td width="50%">Wrong enumeration value: target system.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">WRONGENUM_PARAMETER_DISTRIBUTIONCHANNEL</td><td width="50%">Wrong enumeration value: Distribution channel.</td></tr>
+          <tr><td width="5%">403</td><td width="45%">USER_IAM_NOTFOUND</td><td width="50%">User was not found in backend systems.</td></tr>
+          <tr><td width="5%">403</td><td width="45%">ACCOUNT_NOT_FOUND</td><td width="50%">Account was not found in backend systems.</td></tr>
+          <tr><td width="5%">404</td><td width="45%">LOAD_ACCOUNT_DATA_FAILED</td><td width="50%">Failed loading account data from backend systems.</td></tr>
+        </table>
+      tags:
+        - Cashloan service operations
+      externalDocs:
+        url: https://cnfl.csin.cz/display/UL/Loans_REST__RBL2202_Nacteni_seznamu_nabizenych_operaci_UFO
+      parameters:
+        - $ref: "#/components/parameters/sourceSystemFromHeader"
+        - $ref: "#/components/parameters/cluidFromHeader"
+        - $ref: "#/components/parameters/cgpHashedIdFromQuery"
+        - $ref: "#/components/parameters/distributionChannelFromQuery"
+        - $ref: "#/components/parameters/targetSystemFromQuery"
+        - $ref: "#/components/parameters/languageFromQuery"
+        - $ref: "#/components/parameters/userIdFromHeader"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetOperationsCashloanResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+        "404":
+          $ref: "#/components/responses/ApiError"
+        "403":
+          $ref: "#/components/responses/ApiError"
+
+  /my/cashloan/installment/changedamountinterval:
+    get:
+      description: Service calculates interval for installment when it changed
+      parameters:
+        - $ref: "#/components/parameters/currentLoansIdFromPath"
+        - $ref: "#/components/parameters/changeDateFromPath"
+        - $ref: "#/components/parameters/cluidFromHeader"
+        - $ref: "#/components/parameters/userIdFromHeader"
+        - $ref: "#/components/parameters/sourceSystemFromHeader"
+      tags:
+        - Cashloan service operations
+      responses:
+        "200":
+          $ref: "#/components/responses/ChangeAmountIntervalResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+        "500":
+          $ref: "#/components/responses/ApiError"
+  /my/cashloan/installment/changedamountvariant:
+    get:
+      description: Service calculates new value for installment when it changed
+      parameters:
+        - $ref: "#/components/parameters/currentLoansIdFromPath"
+        - $ref: "#/components/parameters/changeDateFromPath"
+        - $ref: "#/components/parameters/newInstallmentFromPath"
+        - $ref: "#/components/parameters/cluidFromHeader"
+        - $ref: "#/components/parameters/userIdFromHeader"
+        - $ref: "#/components/parameters/sourceSystemFromHeader"
+      tags:
+        - Cashloan service operations
+      responses:
+        "200":
+          $ref: "#/components/responses/ChangeAmountVariantResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+        "500":
+          $ref: "#/components/responses/ApiError"
+  /my/cashloan/installment/postponementvariant:
+    get:
+      description: Service calculates new value for installment when it is postponed
+      parameters:
+        - $ref: "#/components/parameters/currentLoansIdFromPath"
+        - $ref: "#/components/parameters/requiredDateFromPath"
+        - $ref: "#/components/parameters/keepLastDateFromPath"
+        - $ref: "#/components/parameters/cluidFromHeader"
+        - $ref: "#/components/parameters/userIdFromHeader"
+        - $ref: "#/components/parameters/sourceSystemFromHeader"
+      tags:
+        - Cashloan service operations
+      responses:
+        "200":
+          $ref: "#/components/responses/PostponeVariantResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+        "500":
+          $ref: "#/components/responses/ApiError"
+
+  /my/revolvingloan/installment/changedamountinterval:
+    get:
+      description: >-
+        The service calculates the interval for changing the amount of the installment for the given RUFO account as of the required date. 
+        The service performs only an independent calculation of limits without a link to the request. The service was created for Ticketing.
+        <table>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CLUID</td><td width="50%">Missing parameter: CLUID.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CURRENTLOANID</td><td width="50%">Missing parametr: currentLoanId</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISMATCH_PARAMETER_CHANGEFROM</td><td width="50%">Missing parametr: changeFrom</td></tr>
+          <tr><td width="5%">400</td><td width="45%">INVALID_PARAMETER_CURRENTLOANID</td><td width="50%">The account is not responding to input account which are contracted loan increase</td></tr>
+          <tr><td width="5%">400</td><td width="45%">INVALID_PARAMETER_CHANGEFROM</td><td width="50%">Type mismatch parameter: changeFrom</td></tr>
+          <tr><td width="5%">400</td><td width="45%">INVALID_PARAMETER_CHANGEFROM</td><td width="50%">Date changeFrom is invalid (date is in the past or protection period of next payment is broken)</td></tr>
+          <tr><td width="5%">400</td><td width="45%">OPERATION_NOT_ALLOWED</td><td width="50%">Specified operation with loan account is not allowed (unfulfilled conditions).</td></tr>
+          <tr><td width="5%">400</td><td width="45%">INVALID_PARAMETER_DATECONDITIONSCHANGE</td><td width="50%">Date changeFrom is invalid - protection period of next payment is broken</td></tr>
+          <tr><td width="5%">500</td><td width="45%">LOANACCOUNT_LOADING_FAILED</td><td width="50%">Loading loan account information failed</td></tr>
+        </table>
+      summary: Service calculates interval for installment when it changed
+      operationId: getChangeAmountIntervalRufo
+      externalDocs:
+        url: https://cnfl.csin.cz/display/UL/Loans_REST__RBL2502_Vypocet_intervalu_zmeny_vyse_splatky
+      parameters:
+        - $ref: "#/components/parameters/currentLoansIdFromPath"
+        - $ref: "#/components/parameters/changeDateNonRequiredFromPath"
+        - $ref: "#/components/parameters/cluidFromHeader"
+        - $ref: "#/components/parameters/userIdFromHeader"
+        - $ref: "#/components/parameters/sourceSystemFromHeader"
+      tags:
+        - Revolving loan service operations
+      responses:
+        "200":
+          $ref: "#/components/responses/ChangeAmountIntervalRufoResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+        "500":
+          $ref: "#/components/responses/ApiError"
+
+  /my/creditcardloan/service/operations:
+    get:
+      description: >-
+        REST služba zajišťuje načtení výčtu nabízených servisních operací nad zadaným úvěrovým účtem typu UKK. 
+        Na vstupu služby je nutné zadat cílový systém, ve kterém budou operace prováděny, dle toho bude vrácena relevantní sada operací, jejich hierarchie a popisky v zadaném jazyce.
+        Hierarchií je míněno sdružení některých operací do dílčích skupin dle tématu, kterých se operace týkají (např. operace se splátkou jsou změna splátky a odklad splátek), 
+        což je dáno výstupní kolekcí actionGroups. Služba pro každou operaci vrací i URL deeplink, na kterém je možné operaci v daném systému spustit.
+        <table>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CLUID</td><td width="50%">Missing parameter: CLUID.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CGPHASHEDID</td><td width="50%">Missing parameter: CGP Hashed ID</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_TARGETSYSTEM</td><td width="50%">Missing parametr: targetSystem</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_DISTRIBUTIONCHANNEL</td><td width="50%">Missing parameter: Distribution channel</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_LANGUAGE</td><td width="50%">Missing parameter: language</td></tr>
+          <tr><td width="5%">400</td><td width="45%">WRONGENUM_PARAMETER_TARGETSYSTEM</td><td width="50%">Wrong enumeration value: target system</td></tr>
+          <tr><td width="5%">400</td><td width="45%">WRONGENUM_PARAMETER_DISTRIBUTIONCHANNEL</td><td width="50%">Wrong enumeration value: Distribution channel</td></tr>
+          <tr><td width="5%">403</td><td width="45%">USER_IAM_NOTFOUND</td><td width="50%">User was not found in backend systems</td></tr>
+          <tr><td width="5%">403</td><td width="45%">ACCOUNT_NOT_FOUND</td><td width="50%">Account was not found in backend systems</td></tr>
+          <tr><td width="5%">404</td><td width="45%">LOAD_ACCOUNT_DATA_FAILED</td><td width="50%">Failed loading account data from backend systems</td></tr>
+        </table>
+      summary: REST služba zajišťuje načtení výčtu nabízených servisních operací nad zadaným úvěrovým účtem typu UKK
+      operationId: getCreditCardLoanServiceOperations
+      externalDocs:
+        url: https://cnfl.csin.cz/display/UL/Loans_REST__RBL2401_Nacteni_seznamu_nabizenych_operaci_pro_UKK
+      parameters:
+        - $ref: "#/components/parameters/cluidFromHeader"
+        - $ref: "#/components/parameters/userIdFromHeader"
+        - $ref: "#/components/parameters/sourceSystemFromHeader"
+        - $ref: "#/components/parameters/cgpHashedIdFromQuery"
+        - $ref: "#/components/parameters/targetSystemFromQuery"
+        - $ref: "#/components/parameters/distributionChannelFromQuery"
+        - $ref: "#/components/parameters/languageFromQuery"
+      tags:
+        - Credit card loan service operations
+      responses:
+        "200":
+          $ref: "#/components/responses/GetCreditCardLoanServiceOperationsResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+        "403":
+          $ref: "#/components/responses/ApiError"
+
+  /my/overdraft/service/operations:
+    get:
+      summary: Gets allowed operations for product
+      operationId: getOverdraftOperations
+      description: >-
+        Service provides list of operations allowed for product</br></br>
+        Returning this error codes:
+        <table>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CLUID</td><td width="50%">Missing parameter: Cluid.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CGPHASHEDID</td><td width="50%">Missing parameter: CGP Hashed ID.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_TARGETSYSTEM</td><td width="50%">Missing parameter: Target system .</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_DISTRIBUTIONCHANNEL</td><td width="50%">Missing parameter: Distribution channel.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_LANGUAGE</td><td width="50%">Missing parameter: Language.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">WRONGENUM_PARAMETER_TARGETSYSTEM</td><td width="50%">Wrong enumeration value: target system.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">WRONGENUM_PARAMETER_DISTRIBUTIONCHANNEL</td><td width="50%">Wrong enumeration value: Distribution channel.</td></tr>
+          <tr><td width="5%">403</td><td width="45%">USER_IAM_NOTFOUND</td><td width="50%">User was not found in backend systems.</td></tr>
+          <tr><td width="5%">403</td><td width="45%">ACCOUNT_NOT_FOUND</td><td width="50%">Account was not found in backend systems.</td></tr>
+          <tr><td width="5%">404</td><td width="45%">LOAD_ACCOUNT_DATA_FAILED</td><td width="50%">Failed loading account data from backend systems.</td></tr>
+        </table>
+      tags:
+        - Overdraft service operations
+      externalDocs:
+        url: https://cnfl.csin.cz/display/UL/Loans_REST__RBL2303_Nacteni_seznamu_nabizenych_operaci_pro_KTK
+      parameters:
+        - $ref: "#/components/parameters/sourceSystemFromHeader"
+        - $ref: "#/components/parameters/cluidFromHeader"
+        - $ref: "#/components/parameters/cgpHashedIdFromQuery"
+        - $ref: "#/components/parameters/distributionChannelFromQuery"
+        - $ref: "#/components/parameters/targetSystemFromQuery"
+        - $ref: "#/components/parameters/languageFromQuery"
+        - $ref: "#/components/parameters/userIdFromHeader"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetOperationsOverdraftResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+        "404":
+          $ref: "#/components/responses/ApiError"
+        "403":
+          $ref: "#/components/responses/ApiError"
+
+  /eccpartners/applications:
+    post:
+      description: >-
+        Služba slouží k založení žádosti o úvěr od partnera externího call centra nebo vrácení nedokončené žádosti pro partnera externího call centra, aby poradce externího call centra mohl pokračovat ve zpracování
+        <table>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_CLUID</td><td width="50%">Missing parameter: CLUID.</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_FINANCIALPRODUCT</td><td width="50%">Missing parameter: Financial product</td></tr>
+          <tr><td width="5%">400</td><td width="45%">MISSING_PARAMETER_USERID</td><td width="50%">Missing parameter: UserName</td></tr>
+          <tr><td width="5%">400</td><td width="45%">WRONGENUM_PARAMETER_FINANCIALPRODUCT</td><td width="50%">Wrong enumeration value: Financial product</td></tr>
+          <tr><td width="5%">400</td><td width="45%">INVALID_PARAMETER_FINANCIALPRODUCT</td><td width="50%">Invalid financial product</td></tr>
+          <tr><td width="5%">403</td><td width="45%">USER_NORIGHT_LOANAPPLICATION</td><td width="50%">No rights for loan application processing</td></tr>
+          <tr><td width="5%">403</td><td width="45%">UNFINISHEDAPPLICATION_EXIST</td><td width="50%">Unfinished application exist that you cannot process</td></tr>
+          <tr><td width="5%">503</td><td width="45%">BACKEND_IAM_NOTAVAILABLE</td><td width="50%">BE IAM is not available</td></tr>
+          <tr><td width="5%">403</td><td width="45%">USER_IAM_NOTFOUND</td><td width="50%">The user in IAM is not found</td></tr>
+          <tr><td width="5%">403</td><td width="45%">USERROLE_IAM_NOTFOUND</td><td width="50%">The user roles in IAM are not found</td></tr>
+          <tr><td width="5%">403</td><td width="45%">USER_NOIDENTIFY_BROKER</td><td width="50%">No find external call center partner for user</td></tr>
+          <tr><td width="5%">500</td><td width="45%">VARIANT_EMPTY</td><td width="50%">No variant modelled</td></tr>
+          <tr><td width="5%">400</td><td width="45%">BLOCKING_APPLICATION</td><td width="50%">There is another blocking application in the system</td></tr>
+          <tr><td width="5%">400</td><td width="45%">CLIENT_INVALIDDATA</td><td width="50%">Data about the client (applicant) downloaded from the CRM is incomplete, the request can not be created</td></tr>
+          <tr><td width="5%">400</td><td width="45%">CLIENT_BLOCKINGWARNINGS</td><td width="50%">Blocking alert</td></tr>
+          <tr><td width="5%">400</td><td width="45%">CLIENT_ISDELIQUENT</td><td width="50%">The client is deceptive</td></tr>
+          <tr><td width="5%">400</td><td width="45%">CLIENT_ISONBLACKLIST</td><td width="50%">The client is on a blacklist</td></tr>
+        </table>
+      summary: Služba slouží k založení žádosti o úvěr od partnera externího call centra nebo vrácení nedokončené žádosti pro partnera externího call centra
+      operationId: getEccPartnerApplication
+      externalDocs:
+        url: https://cnfl.csin.cz/display/UL/Loans_REST__RBL1306_Zalozeni_zadosti_partnera_externiho_call_centra
+      parameters:
+        - $ref: "#/components/parameters/userIdFromHeader"
+        - $ref: "#/components/parameters/sourceSystemFromHeader"
+      tags:
+        - ECC partners
+      requestBody:
+        $ref: "#/components/requestBodies/GetEccPartnerApplicationRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/GetEccPartnerApplicationResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+        "403":
+          $ref: "#/components/responses/ApiError"
+        "500":
+          $ref: "#/components/responses/ApiError"
+        "503":
+          $ref: "#/components/responses/ApiError"
+  /my/applications/{caseId}/steps/{stepCode}/execute:
+    post:
+      operationId: executeStep
+      description: Executes business logic for specified step
+      summary: Executes business logic for specified step
+      tags:
+        - Application steps
+      parameters:
+        - $ref: "#/components/parameters/caseIdFromPath"
+        - $ref: "#/components/parameters/stepCodeFromPath"
+        - $ref: "#/components/parameters/webApiKeyFromHeader"
+      requestBody:
+        $ref: "#/components/requestBodies/ExecuteStepRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/ExecuteStepResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+  /my/applications/{caseId}/steps/backendsubsteps:
+    get:
+      summary: RBL1381 - The service is used to load the partial steps of establishing the loan into BE.
+      description: >-
+        Služba slouží k načtení (pod)kroků založení do BE.
+      externalDocs:
+        url: https://cnfl.csin.cz/pages/viewpage.action?spaceKey=UL&title=Loans_REST__REL1381_Nacteni_kroku_zalozeni_do_BE
+      parameters:
+        - $ref: "#/components/parameters/webApiKeyFromHeader"
+        - $ref: "#/components/parameters/caseIdFromRoute"
+        - $ref: "#/components/parameters/groupCodeFromQuery"
+      tags:
+        - Backend creation
+      responses:
+        "200":
+          $ref: "#/components/responses/GetSubStepResponse"
+        "400":
+          $ref: "#/components/responses/ApiError"
+        "403":
+          $ref: "#/components/responses/ApiError"
+        "404":
+          $ref: "#/components/responses/ApiError"
+      operationId: GetBackendSubSteps
