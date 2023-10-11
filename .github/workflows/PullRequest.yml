@@ -34,7 +34,7 @@ jobs:
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: merge
       - name: Auto approve pull request
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh workflow run AutoApprove.yml -f pullRequestNumber=${{ steps.cpr.outputs.pull-request-number }}
+        with:
+          workflow: Auto approve
+          inputs: '{ "pullRequestNumber": ${{ steps.cpr.outputs.pull-request-number }}}'
           
