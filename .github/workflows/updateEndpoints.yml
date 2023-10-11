@@ -14,6 +14,14 @@ jobs:
         var=$(echo 'Hello world' | base64)
         echo $var
     - name: Ping
-      run: ping -n 2 www.csast.csas.cz
+      run: |
+        curl --location --request POST 'https://www.csast.csas.cz/sys/webapi/v3/admin/backends/agapjhsqq2j3myrfo1wpown2i0/import' \
+        --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c3IiOiJkYTVkOWVkOC1hOTdlLTRlZWUtOGRiOS1mZDg1ODVmZTUwMTMiLCJqdGkiOiJleTBkdzRhNGJyajRmaXlyc2N1YWt6ZndxYSJ9.-F98WP_eUK4ko0iJ_hTZ7vUrN0NX11LePJlsQgU8NfU' \
+        --header 'Content-Type: application/json' \
+        --data-raw '{
+         "type": "OPEN_API",
+         "data": "__DATA___"
+        }'
+        
   
 
