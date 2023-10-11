@@ -36,5 +36,5 @@ jobs:
       - name: Auto approve pull request
         uses: hmarr/auto-approve-action@v3
         with:
-          pull-request-number: ${{ github.event.inputs.pullRequestNumber }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           
