@@ -16,7 +16,7 @@ jobs:
     - name: Update endpoints
       run: |
         curl --location --request POST 'https://www.csast.csas.cz/sys/webapi/v3/admin/backends/agapjhsqq2j3myrfo1wpown2i0/import' \
-        --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c3IiOiJkYTVkOWVkOC1hOTdlLTRlZWUtOGRiOS1mZDg1ODVmZTUwMTMiLCJqdGkiOiJleTBkdzRhNGJyajRmaXlyc2N1YWt6ZndxYSJ9.-F98WP_eUK4ko0iJ_hTZ7vUrN0NX11LePJlsQgU8NfU' \
+        --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c3IiOiJkYTVkOWVkOC1hOTdlLTRlZWUtOGRiOS1mZDg1ODVmZTUwMTMiLCJqdGkiOiJkeWdsd2VoYXhmaXpsajRvbmhwMmNnbDI1eSJ9.ITkP0HxCHVcp4LgQouqihcGUotj_KE4mPwqy-MnrPUc' \
         --header 'Content-Type: application/json' \
         --data-raw '{
          "type": "OPEN_API",
