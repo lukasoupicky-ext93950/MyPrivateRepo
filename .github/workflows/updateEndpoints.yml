@@ -13,5 +13,7 @@ jobs:
       run: |
         var=$(echo 'Hello world' | base64)
         echo $var
+    - name: Ping
+      run: ping uat2-webapi-mila.vs.csin.cz
   
 
