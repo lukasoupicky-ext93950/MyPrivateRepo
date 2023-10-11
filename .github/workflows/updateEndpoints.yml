@@ -14,6 +14,6 @@ jobs:
         var=$(echo 'Hello world' | base64)
         echo $var
     - name: Ping
-      run: ping www.csast.csas.cz
+      run: ping -n 2 www.csast.csas.cz
   
 
