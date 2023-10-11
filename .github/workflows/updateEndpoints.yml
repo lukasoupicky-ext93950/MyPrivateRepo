@@ -1,0 +1,17 @@
+name: Update endpoints on webApi
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Encode_yaml_to_base64:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Encode file
+      run: |
+        var=$(echo 'Hello world' | base64)
+        echo $var
+  
+
