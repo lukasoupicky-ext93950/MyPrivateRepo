@@ -1,1 +1,18 @@
-aaa
+name: List APIs for frontend
+outputs:
+  apis:
+    description: 'Map of all available backends for frontend'
+    value: ${{ steps.list-components.outputs.components }}
+
+description: 'Lists all the application components in the repository'
+runs:
+  using: "composite"
+  steps:
+    - name: Build the list of available components with helm charts
+      id: list-components
+      run: |
+        $components = ./.github/actions/list-components/list-backends.ps1
+        $result = $components | ConvertTo-Json -Compress
+        echo "components=$result"
+        echo "components=$result" >> $env:GITHUB_OUTPUT
+      shell: pwsh
