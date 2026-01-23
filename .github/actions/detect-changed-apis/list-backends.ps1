@@ -1,4 +1,6 @@
 $components = @{}
+$loc = Get-Location
+Write-Host $loc
 Get-ChildItem -Path . -Directory -name | ForEach-Object -Process {
   Write-Host $_
   $components[$name] = $_
