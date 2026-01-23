@@ -8,7 +8,7 @@ on:
 jobs:
   Detect-apis:
     name: Detect affected apis
-    runs-on: csas-linux
+    runs-on: ubuntu-latest
     steps:
     - name: Detect apis
       id: detect-apis
