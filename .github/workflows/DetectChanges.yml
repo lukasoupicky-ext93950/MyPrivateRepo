@@ -1,0 +1,16 @@
+name: Detect changed files
+
+on:
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  Detect-apis:
+    name: Detect affected apis
+    runs-on: csas-linux
+    steps:
+    - name: Detect apis
+      id: detect-apis
+      uses: ./.github/actions/detect-changed-apis
+        
