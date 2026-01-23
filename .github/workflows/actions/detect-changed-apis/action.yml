@@ -11,7 +11,7 @@ runs:
     - name: Build the list of available components with helm charts
       id: list-components
       run: |
-        $components = ./.github/actions/list-components/list-backends.ps1
+        $components = ./.github/actions/detect-changed-apis/list-backends.ps1
         $result = $components | ConvertTo-Json -Compress
         echo "components=$result"
         echo "components=$result" >> $env:GITHUB_OUTPUT
